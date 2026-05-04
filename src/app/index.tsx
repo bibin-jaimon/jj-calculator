@@ -30,7 +30,7 @@ export default function HomeScreen() {
     activeField?.rowId === rowId && activeField?.field === field;
 
   return (
-    <SafeAreaView className="flex-1 bg-[#f8f3ef]" edges={['top', 'left', 'right']}>
+    <SafeAreaView className="flex-1 bg-[#f8f3ef]">
       {/* Main content */}
       <View className="flex-1 px-5 pt-6">
         {/* Total amount card + Reset */}
