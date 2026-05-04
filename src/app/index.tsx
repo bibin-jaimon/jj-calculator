@@ -103,7 +103,7 @@ export default function HomeScreen() {
                   <TextInput
                     value={row.pricePerKg}
                     onChangeText={(value) => setRowPricePerKg(row.id, value)}
-                    placeholder="100"
+                    placeholder="Rate"
                     placeholderTextColor="#a48f84"
                     editable={false}
                     pointerEvents="none"
@@ -144,7 +144,7 @@ export default function HomeScreen() {
                   <TextInput
                     value={row.weightInKg}
                     onChangeText={(value) => setRowWeightInKg(row.id, value)}
-                    placeholder="0.546"
+                    placeholder="Weight"
                     placeholderTextColor="#a48f84"
                     editable={false}
                     pointerEvents="none"
