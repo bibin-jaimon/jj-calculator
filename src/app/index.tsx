@@ -35,13 +35,8 @@ export default function HomeScreen() {
       <View className="flex-1 px-5 pt-6">
         {/* Total amount card + Reset */}
         <View className="z-10 mb-4 flex-row items-stretch gap-3">
-          <View className="flex-1 rounded-[32px] border-4 border-[#f2d6c7] bg-[#fdfbfa] px-5 py-7 shadow-sm">
-            <Text className="text-left text-2xl font-extrabold tracking-wide text-[#5b4037]">
-              TOTAL PRICE
-            </Text>
-            <View className="mt-4 flex-row items-end justify-start">
-              <Text className="text-6xl font-extrabold text-[#2e1309]">{amountText}</Text>
-            </View>
+          <View className="flex-1 rounded-[32px] border-4 border-[#f2d6c7] bg-[#fdfbfa] px-5 py-4 shadow-sm">
+            <Text className="text-6xl font-extrabold text-[#2e1309]">{amountText}</Text>
           </View>
           <TouchableOpacity
             onPress={clear}
