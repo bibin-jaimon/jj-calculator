@@ -1,6 +1,6 @@
 import { Image } from 'expo-image';
 import { useState } from 'react';
-import { Dimensions, StyleSheet, View } from 'react-native';
+import { Dimensions, StyleSheet, Text, View } from 'react-native';
 import Animated, { Easing, Keyframe } from 'react-native-reanimated';
 import { scheduleOnRN } from 'react-native-worklets';
 
@@ -40,7 +40,9 @@ export function AnimatedSplashOverlay() {
         }
       })}
       style={styles.backgroundSolidColor}
-    />
+    >
+      <Text style={styles.splashTitle}>JJ Cal</Text>
+    </Animated.View>
   );
 }
 
@@ -126,7 +128,15 @@ const styles = StyleSheet.create({
   },
   backgroundSolidColor: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: '#208AEF',
+    backgroundColor: '#f8f3ef',
+    justifyContent: 'center',
+    alignItems: 'center',
     zIndex: 1000,
+  },
+  splashTitle: {
+    color: '#2e1309',
+    fontSize: 52,
+    fontWeight: '800',
+    letterSpacing: 1,
   },
 });
