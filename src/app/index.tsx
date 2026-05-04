@@ -14,15 +14,17 @@ import { useKeyboardStore } from '@/store/keyboard';
 import { NumericKeyboard } from '@/components/numeric-keyboard';
 
 export default function HomeScreen() {
-  const { amountText, rows, setRowPricePerKg, setRowWeightInKg, addRow, removeRow, clear } =
+  const { amountText, rows, nextRowId, setRowPricePerKg, setRowWeightInKg, addRow, removeRow, clear } =
     useCalculatorStore();
   const { activeField, setActiveField } = useKeyboardStore();
   const scrollRef = useRef<ScrollView>(null);
 
   const handleAddRow = () => {
+    const newRowId = nextRowId;
     addRow();
     requestAnimationFrame(() => {
       scrollRef.current?.scrollToEnd({ animated: true });
+      setActiveField({ rowId: newRowId, field: 'pricePerKg' });
     });
   };
 

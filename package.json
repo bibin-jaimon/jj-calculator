@@ -9,7 +9,10 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "lint": "expo lint",
-    "postinstall": "patch-package"
+    "postinstall": "patch-package",
+    "eas:dev": "eas build --platform android --profile development --non-interactive",
+    "eas:preview": "eas build --platform android --profile preview --non-interactive",
+    "eas:build": "eas build --platform android --profile production --non-interactive"
   },
   "dependencies": {
     "@react-navigation/bottom-tabs": "^7.15.5",
