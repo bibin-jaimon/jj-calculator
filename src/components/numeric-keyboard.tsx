@@ -1,5 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View, Vibration } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useKeyboardStore } from '@/store/keyboard';
 import { useCalculatorStore } from '@/store/calculator';
@@ -13,19 +14,26 @@ const KEYS = [
 
 type Key = (typeof KEYS)[number][number];
 
-export function NumericKeyboard() {
-  const { activeField } = useKeyboardStore();
+interface NumericKeyboardProps {
+  onAddRow: () => void;
+}
+
+export function NumericKeyboard({ onAddRow }: NumericKeyboardProps) {
+  const insets = useSafeAreaInsets();
+  const { activeField, isVisible, toggleKeyboard } = useKeyboardStore();
   const { rows, setRowPricePerKg, setRowWeightInKg } = useCalculatorStore();
 
-  if (!activeField) return null;
+  const showKeypad = isVisible && activeField !== null;
 
   const getCurrentValue = (): string => {
+    if (!activeField) return '';
     const row = rows.find((r) => r.id === activeField.rowId);
     if (!row) return '';
     return activeField.field === 'pricePerKg' ? row.pricePerKg : row.weightInKg;
   };
 
   const updateValue = (val: string) => {
+    if (!activeField) return;
     if (activeField.field === 'pricePerKg') {
       setRowPricePerKg(activeField.rowId, val);
     } else {
@@ -54,37 +62,65 @@ export function NumericKeyboard() {
     updateValue(current + key);
   };
 
-  return (
-    <View style={styles.container}>
-      {/* Handle bar */}
-      <View style={styles.handleBar} />
+  const handleToggleKeyboard = () => {
+    const fallbackRowId = rows[rows.length - 1]?.id ?? 1;
+    toggleKeyboard(fallbackRowId);
+  };
 
-      {KEYS.map((row, rowIdx) => (
-        <View key={rowIdx} style={styles.row}>
-          {row.map((key) => {
-            const isBackspace = key === '⌫';
-            const isDot = key === '.';
-            return (
-              <TouchableOpacity
-                key={key}
-                style={[
-                  styles.key,
-                  isBackspace && styles.keyBackspace,
-                  isDot && styles.keyDot,
-                ]}
-                onPress={() => handleKeyPress(key)}
-                activeOpacity={0.65}
-                accessibilityLabel={isBackspace ? 'Backspace' : key}
-                accessibilityRole="button"
-              >
-                <Text style={[styles.keyText, isBackspace && styles.keyTextBackspace]}>
-                  {key}
-                </Text>
-              </TouchableOpacity>
-            );
-          })}
-        </View>
-      ))}
+  return (
+    <View style={[styles.container, { paddingBottom: Math.max(insets.bottom, 8) }]}>
+      {/* Small button row — stays at bottom when hidden, attached to top of keyboard when open */}
+      <View style={styles.toolbarRow}>
+        <TouchableOpacity
+          style={styles.toggleButton}
+          onPress={handleToggleKeyboard}
+          activeOpacity={0.7}
+          accessibilityRole="button"
+          accessibilityLabel={showKeypad ? 'Hide keyboard' : 'Show keyboard'}
+        >
+          <Text style={styles.toggleButtonText}>{showKeypad ? '▼' : '▲'}</Text>
+        </TouchableOpacity>
+
+        <View style={styles.handleBar} />
+
+        <TouchableOpacity
+          style={styles.plusButton}
+          onPress={onAddRow}
+          activeOpacity={0.7}
+          accessibilityRole="button"
+          accessibilityLabel="Add row"
+        >
+          <Text style={styles.plusButtonText}>+</Text>
+        </TouchableOpacity>
+      </View>
+
+      {showKeypad &&
+        KEYS.map((row, rowIdx) => (
+          <View key={rowIdx} style={styles.row}>
+            {row.map((key) => {
+              const isBackspace = key === '⌫';
+              const isDot = key === '.';
+              return (
+                <TouchableOpacity
+                  key={key}
+                  style={[
+                    styles.key,
+                    isBackspace && styles.keyBackspace,
+                    isDot && styles.keyDot,
+                  ]}
+                  onPress={() => handleKeyPress(key)}
+                  activeOpacity={0.65}
+                  accessibilityLabel={isBackspace ? 'Backspace' : key}
+                  accessibilityRole="button"
+                >
+                  <Text style={[styles.keyText, isBackspace && styles.keyTextBackspace]}>
+                    {key}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        ))}
     </View>
   );
 }
@@ -98,7 +134,7 @@ const BACKSPACE_BG = '#f4d7c7';
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#f3e7df',
-    paddingTop: 10,
+    paddingTop: 8,
     paddingBottom: 8,
     paddingHorizontal: 12,
     gap: 8,
@@ -110,13 +146,48 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 10,
   },
+  toolbarRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 2,
+  },
+  toggleButton: {
+    height: 38,
+    minWidth: 52,
+    paddingHorizontal: 14,
+    borderRadius: 10,
+    backgroundColor: '#eadfd8',
+    borderWidth: 1,
+    borderColor: KEY_BORDER,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  toggleButtonText: {
+    fontSize: 16,
+    fontWeight: '800',
+    color: BROWN,
+  },
+  plusButton: {
+    height: 48,
+    minWidth: 76,
+    paddingHorizontal: 22,
+    borderRadius: 14,
+    backgroundColor: BROWN,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  plusButtonText: {
+    fontSize: 30,
+    lineHeight: 32,
+    fontWeight: '700',
+    color: CREAM,
+  },
   handleBar: {
     width: 40,
     height: 4,
     borderRadius: 2,
     backgroundColor: '#c8b0a4',
-    alignSelf: 'center',
-    marginBottom: 4,
   },
   row: {
     flexDirection: 'row',

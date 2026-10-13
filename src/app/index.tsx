@@ -1,5 +1,4 @@
 import {
-  Platform,
   ScrollView,
   Text,
   TextInput,
@@ -12,6 +11,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useCalculatorStore } from '@/store/calculator';
 import { useKeyboardStore } from '@/store/keyboard';
 import { NumericKeyboard } from '@/components/numeric-keyboard';
+import { HamburgerMenu } from '@/components/hamburger-menu';
 
 export default function HomeScreen() {
   const { amountText, rows, nextRowId, setRowPricePerKg, setRowWeightInKg, addRow, removeRow, clear } =
@@ -32,17 +32,46 @@ export default function HomeScreen() {
     activeField?.rowId === rowId && activeField?.field === field;
 
   return (
-    <SafeAreaView className="flex-1 bg-[#f8f3ef]">
+    <SafeAreaView edges={['top', 'left', 'right']} className="flex-1 bg-[#f8f3ef]">
       {/* Main content */}
-      <View className="flex-1 px-5 pt-6">
-        {/* Total amount card + Reset */}
-        <View className="z-10 mb-4 flex-row items-stretch gap-3">
-          <View className="flex-1 rounded-[32px] border-4 border-[#f2d6c7] bg-[#fdfbfa] px-5 py-4 shadow-sm">
-            <Text className="text-6xl font-extrabold text-[#2e1309]">{amountText}</Text>
+      <View className="flex-1 px-5 pt-4">
+        {/* Hamburger + Total amount card + Reset in one line */}
+        <View
+          style={{ height: 56 }}
+          className="z-10 mb-4 flex-row items-stretch gap-2.5"
+        >
+          <HamburgerMenu buttonClassName="h-full w-12 items-center justify-center rounded-2xl bg-[#eadfd8]" />
+
+          <View
+            style={{ height: 56, paddingVertical: 2 }}
+            className="flex-1 justify-center overflow-hidden rounded-2xl border-4 border-[#f2d6c7] bg-[#fdfbfa] px-4 shadow-sm"
+          >
+            <Text
+              numberOfLines={1}
+              adjustsFontSizeToFit
+              minimumFontScale={0.35}
+              style={{
+                includeFontPadding: false,
+                textAlignVertical: 'center',
+                fontSize:
+                  amountText.length <= 5
+                    ? 48
+                    : amountText.length <= 7
+                      ? 38
+                      : amountText.length <= 9
+                        ? 30
+                        : 24,
+              }}
+              className="font-extrabold text-[#2e1309]"
+            >
+              {amountText}
+            </Text>
           </View>
+
           <TouchableOpacity
             onPress={clear}
-            className="w-28 items-center justify-center rounded-2xl bg-[#5b4037] px-3"
+            style={{ height: 56 }}
+            className="w-20 items-center justify-center rounded-2xl bg-[#5b4037] px-2"
             accessibilityRole="button"
           >
             <Text className="text-center text-sm font-semibold text-[#fff7f2]">Reset</Text>
@@ -180,22 +209,10 @@ export default function HomeScreen() {
             ))}
           </View>
         </ScrollView>
-
-        {/* Add row button */}
-        <View className="items-end pt-3 pb-3">
-          <TouchableOpacity
-            onPress={handleAddRow}
-            className="h-14 w-14 items-center justify-center rounded-full bg-[#5b4037]"
-            accessibilityRole="button"
-            accessibilityLabel="Add row"
-          >
-            <Text className="text-4xl font-bold leading-none text-[#fff7f2]">+</Text>
-          </TouchableOpacity>
-        </View>
       </View>
 
-      {/* Persistent on-screen keyboard — always visible at bottom */}
-      <NumericKeyboard />
+      {/* Persistent bottom button row + keyboard */}
+      <NumericKeyboard onAddRow={handleAddRow} />
     </SafeAreaView>
   );
 }
